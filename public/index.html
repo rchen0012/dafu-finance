@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DAFU 财务催款中心</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<div class="shell">
+<aside><div class="brand"><span class="logo">D</span><div><strong>DAFU</strong><small>财务催款中心</small></div></div>
+<nav aria-label="主导航">
+<button data-page="overview"><span aria-hidden="true">▦</span>财务仪表盘</button>
+<button data-page="bills"><span aria-hidden="true">▤</span>账单列表</button>
+<button data-page="customers"><span aria-hidden="true">◎</span>客户汇总</button>
+<button data-page="tasks"><span aria-hidden="true">✓</span>催款任务</button>
+<button data-page="risk"><span aria-hidden="true">◇</span>放货风控</button>
+</nav>
+<div class="source"><i></i><span id="source">等待连接</span></div></aside>
+<main><header><div><p id="date"></p><h1 id="title">财务仪表盘</h1></div><button id="refresh" class="action">↻ 刷新数据</button></header>
+<div id="alert" role="status"></div><div id="content"></div></main>
+</div>
+<dialog id="dialog"><div class="dialog-head"><h2 id="dialog-title"></h2><button id="close" class="action" aria-label="关闭">✕</button></div><div id="dialog-content"></div></dialog>
+</body></html>
