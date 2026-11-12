@@ -9,24 +9,24 @@ export function createLark(env, request = fetch) {
   let cached, pending;
   const fail = (message,code) => Object.assign(new Error(message),{safe:message,code});
 
-  async function api(path, options = {}) {
-    for (let attempt = 0; attempt < 3; attempt++) {
+  async function api(path, options = {}, attempts = 3) {
+    for (let attempt = 0; attempt < attempts; attempt++) {
       let response, result;
       try {
         response = await request(host+path,{...options,signal:AbortSignal.timeout(12000),redirect:'error'});
         result = await response.json().catch(()=>null);
       } catch {
-        if (attempt === 2) throw fail('无法连接 Lark，请检查服务器网络后重试');
+        if (attempt === attempts-1) break;
       }
       if (response?.ok && result?.code === 0) return result;
       const code = Number(result?.code) || response?.status;
       if ([401,99991663,99991664,99991668].includes(code)) throw fail('Lark 凭证失效，请检查应用配置',401);
       if (response && response.status !== 429 && response.status < 500 && ![99991400,1254290].includes(code)) {
-        throw fail('Lark 请求失败（'+(code || '响应格式错误')+'）。请检查应用只读权限、Base 协作权限和表格配置',code);
+        throw fail('Lark 请求失败（'+(code || '响应格式错误')+'）。请检查应用权限、Base 协作权限和表格配置',code);
       }
-      if (attempt < 2) await new Promise(resolve=>setTimeout(resolve,350*2**attempt));
+      if (attempt+1 < attempts) await new Promise(resolve=>setTimeout(resolve,350*2**attempt));
     }
-    throw fail('Lark 暂时无法读取，请稍后重试');
+    throw fail(attempts===1 ? 'Lark 未确认保存结果，请先刷新顾客列表核对，再决定是否重试' : 'Lark 暂时无法读取，请稍后重试');
   }
 
   async function token() {
@@ -68,7 +68,18 @@ export function createLark(env, request = fetch) {
   }
 
   let schema;
-  return {async records(fields) {
+  return {
+  async saveRecord(fields,id) {
+    if (env.LARK_ALLOW_CUSTOMER_WRITE !== '1') throw fail('该表未启用写入');
+    const value = await token();
+    const path = table+'/records'+(id ? '/'+encodeURIComponent(id) : '');
+    await api(path,{
+      method:id ? 'PUT' : 'POST',
+      headers:{Authorization:'Bearer '+value,'Content-Type':'application/json'},
+      body:JSON.stringify({fields})
+    },1);
+  },
+  async records(fields) {
     const requested = [...new Set(fields.filter(Boolean))];
     if (!schema || schema.until < Date.now()) {
       const names = (await pages(table+'/fields')).map(field=>field.field_name);
@@ -91,7 +102,9 @@ export function createLark(env, request = fetch) {
       record_id:item.record_id,
       fields:Object.fromEntries(mapping.map(([name,actual])=>[name,item.fields?.[actual]]))
     }));
-  }};
+  }
+  };
 }
+
 
 
