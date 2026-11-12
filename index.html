@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DAFU 财务催款中心</title><style>
+*{box-sizing:border-box} :root{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#16352f;background:#f5f9f8;font-size:14px;--mint:#37beb0;--border:#e0ebe8;--muted:#556e67;--pale:#e4f6f2;--ink:#0e6259} body{margin:0} button,input,textarea,select{font:inherit} button{cursor:pointer} button:disabled{cursor:wait;opacity:.65} :focus-visible{outline:2px solid #13786f;outline-offset:3px} .shell{min-height:100vh;display:grid;grid-template-columns:220px minmax(0,1fr)} aside{background:white;border-right:1px solid var(--border);padding:28px 18px;display:flex;flex-direction:column;gap:32px} .brand{display:flex;align-items:center;gap:12px;padding:0 8px} .brand strong{font-size:22px;letter-spacing:2px}.brand small{display:block;color:var(--muted)} .logo{display:grid;place-items:center;background:var(--mint);width:42px;height:42px;border-radius:12px;font-size:25px;font-weight:800;color:#12352f} nav{display:grid;gap:5px} nav button{display:flex;gap:10px;align-items:center;text-align:left;background:none;border:0;color:var(--muted);padding:12px;border-radius:9px;white-space:nowrap} nav button span{width:16px;text-align:center} nav button:hover,nav button[aria-current=page]{background:var(--pale);color:var(--ink)} nav button[aria-current=page]{font-weight:700} .source{margin-top:auto;color:var(--muted);display:flex;align-items:center;gap:8px;padding:12px} .source i{width:8px;height:8px;border-radius:50%;background:var(--mint)} main{padding:32px clamp(16px,3vw,48px);max-width:1600px;width:100%;margin:0 auto} header,.section-head,.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px} header{margin-bottom:23px} header p{color:var(--muted);margin:0 0 7px} h1,h2,h3{margin:0} h1{font-size:clamp(24px,4vw,34px);letter-spacing:-.04em} h2{font-size:17px} h3{font-size:14px} .action,.primary{padding:9px 13px;border:1px solid var(--border);background:white;border-radius:8px;color:var(--ink);font-weight:650;white-space:nowrap} .primary{background:var(--mint);color:#113c35;border-color:var(--mint)} .action:hover{background:var(--pale)} .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px} .card,.panel{background:white;border:1px solid var(--border);border-radius:13px;padding:18px} .card p{color:var(--muted);margin:0 0 10px} .card strong{font-size:clamp(17px,2.1vw,28px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere} .card small{display:block;color:var(--muted);margin-top:7px} .card:first-child{background:#e6f8f4;border-color:#cdeee7} .overview-grid{display:grid;grid-template-columns:1.12fr 1fr;gap:16px;margin-bottom:16px} .bar-list{display:grid;gap:14px;margin-top:18px}.bar{display:grid;grid-template-columns:7.8em minmax(28px,1fr) auto;align-items:center;gap:8px}.bar span,.muted{color:var(--muted)} meter{width:100%;height:13px;accent-color:var(--mint)} meter::-webkit-meter-optimum-value{background:var(--mint)} .quick{display:grid;gap:10px;margin-top:13px}.quick button{display:flex;justify-content:space-between;white-space:normal;text-align:left} .panel+.panel{margin-top:14px} .section-head{margin-bottom:14px;flex-wrap:wrap} .scroll{overflow-x:auto} table{border-collapse:collapse;width:100%;text-align:left;font-variant-numeric:tabular-nums} th,td{padding:12px 10px;border-bottom:1px solid var(--border);white-space:nowrap} th{font-size:12px;font-weight:650;color:var(--muted);background:#f5faf8} tr:last-child td{border-bottom:0} .pill{border-radius:100px;padding:4px 9px;font-size:12px;background:var(--pale);color:var(--ink);white-space:nowrap} .pill.red{background:#fceae8;color:#962b20}.pill.amber{background:#fff3d8;color:#80540c} .link{border:0;background:none;padding:0;color:var(--ink);text-align:left;font-weight:700} .link:hover{text-decoration:underline} .filters{display:flex;gap:8px;flex-wrap:wrap} input,select,textarea{background:white;border:1px solid #cbdcd7;border-radius:7px;padding:9px;color:inherit;max-width:100%} label{display:grid;gap:6px} form{display:grid;gap:12px} textarea{width:100%;resize:vertical} #alert:not(:empty),.notice{background:#fff3d8;color:#73501b;padding:11px 14px;border-radius:8px;margin-bottom:15px} .notice{margin-top:12px}.empty{padding:16px;color:var(--muted)} dialog{width:min(750px,calc(100% - 24px));max-height:90vh;border:1px solid var(--border);border-radius:15px;color:inherit;padding:20px;overflow:auto} dialog::backdrop{background:#122f2a70} .dialog-head{margin-bottom:17px} dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px} dl div{background:#f4f9f8;padding:9px;border-radius:7px;overflow-wrap:anywhere} dt{color:var(--muted);font-size:12px} dd{margin:4px 0 0} .note{border-top:1px solid var(--border);padding:12px 0;white-space:pre-wrap;overflow-wrap:anywhere} .rule{padding:12px;border:1px solid var(--border);border-radius:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px} .wide{grid-column:1/-1} .controls{display:flex;gap:8px;flex-wrap:wrap} .error{color:#962b20}
+@media(max-width:1050px){.shell{grid-template-columns:174px minmax(0,1fr)} .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-grid{grid-template-columns:1fr}}
+@media(max-width:680px){.shell{display:block} aside{padding:12px 14px;gap:10px;border-right:0;border-bottom:1px solid var(--border)} nav{display:flex;overflow:auto;padding:3px} nav button{padding:9px} nav button span{display:none}.source{padding:0 8px} main{padding-top:19px}.panel,.card{padding:12px}.bar{font-size:12px;grid-template-columns:7.8em minmax(25px,1fr) auto}.rule{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.overview-grid>.panel{margin-top:0}
+
+</style></head>
+<body>
+<div class="shell">
+<aside><div class="brand"><span class="logo">D</span><div><strong>DAFU</strong><small>财务催款中心</small></div></div>
+<nav aria-label="主导航">
+<button data-page="overview"><span aria-hidden="true">▦</span>财务仪表盘</button>
+<button data-page="bills"><span aria-hidden="true">▤</span>账单列表</button>
+<button data-page="customers"><span aria-hidden="true">◎</span>客户汇总</button>
+<button data-page="tasks"><span aria-hidden="true">✓</span>催款任务</button>
+<button data-page="risk"><span aria-hidden="true">◇</span>放货风控</button>
+</nav>
+<div class="source"><i></i><span id="source">等待连接</span></div></aside>
+<main><header><div><p id="date"></p><h1 id="title">财务仪表盘</h1></div><button id="refresh" class="action">↻ 刷新数据</button></header>
+<div id="alert" role="status"></div><div id="content"></div></main>
+</div>
+<dialog id="dialog"><div class="dialog-head"><h2 id="dialog-title"></h2><button id="close" class="action" aria-label="关闭">✕</button></div><div id="dialog-content"></div></dialog>
+<script type="module">
+const dayMs = 86400000;
+const dateFromMs = ms=>new Date(ms).toISOString().slice(0,10);
+const epoch = date=>Date.parse(date+'T00:00:00Z');
+const shift = (date,days)=>dateFromMs(epoch(date)+days*dayMs);
+export const today = (zone, value = new Date())=>new Intl.DateTimeFormat('sv-SE',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).format(value);
+function scalar(value) {
+  if (Array.isArray(value)) return value.length === 1 ? scalar(value[0]) : value.map(scalar).filter(x=>x != null).join(' ');
+  if (value && typeof value === 'object') return scalar(value.value ?? value.text ?? value.name);
+  return value;
+}
+const text = value=>String(scalar(value) ?? '').trim();
+function money(value) {
+  const raw = scalar(value);
+  if (typeof raw === 'number') return Number.isSafeInteger(Math.round(raw*100)) ? Math.round(raw*100) : null;
+  if (typeof raw === 'string' && /^[+-]?\d+(?:\.\d+)?$/.test(raw.trim())) return money(Number(raw));
+  return null;
+}
+function date(value,zone) {
+  const v = scalar(value);
+  if (typeof v === 'number' || (typeof v === 'string' && /^\d{12,15}$/.test(v))) {
+    const parsed = new Date(Number(v));
+    return Number.isFinite(+parsed) ? today(zone,parsed) : null;
+  }
+  const match = typeof v === 'string' && v.trim().match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (!match) return null;
+  const normalized = match[1]+'-'+match[2].padStart(2,'0')+'-'+match[3].padStart(2,'0');
+  return Number.isFinite(epoch(normalized)) && dateFromMs(epoch(normalized)) === normalized ? normalized : null;
+}
+const sum = (list,key)=>list.reduce((total,row)=>total+(row[key] ?? 0),0);
+
+export function snapshot(records,config,state,now,mode,zone=process.env.BUSINESS_TIME_ZONE || 'America/Sao_Paulo') {
+  const {termDays,severeDays,dueSoonDays,warningRatio,fields} = config;
+  const rules = mode === 'demo' && !state.configured && !state.customers.length ? demoCustomers : state.customers;
+  const lookup = new Map(rules.flatMap(c=>c.aliases.map(alias=>[alias,c])));
+  const grouped = new Map(rules.map(rule=>['customer:'+rule.id,{id:'customer:'+rule.id,name:rule.name,rule,bills:[]}]));
+  const bills = records.map(({record_id,fields:raw})=>{
+    const field = name=>raw?.[mode === 'demo' ? name : fields[name]];
+    const store = text(field('客户名字'));
+    const rule = lookup.get(store);
+    const customer = rule ? 'customer:'+rule.id : store ? 'unmapped:'+store : 'missing:'+record_id;
+    const signed = date(field('日期'),zone);
+    const explicitDue = date(field('到期日'),zone);
+    const termValue = scalar(field('账期'));
+    const days = Number(termValue);
+    const term = termValue != null && termValue !== '' && Number.isInteger(days) && days >= 0 && days <= 3650 ? days : termDays;
+    const due = explicitDue || (signed && shift(signed,term));
+    const balance = money(field('剩余货款'));
+    const paid = (money(field('第一次还款金额')) ?? 0)+(money(field('第二次还款金额')) ?? 0);
+    const late = due ? (epoch(now)-epoch(due))/dayMs : null;
+    const issue = !store || balance == null || (balance > 0 && !due);
+    const status = issue ? '待核对' : balance <= 0 ? '已结清' : late > 0 ? '已逾期' : late === 0 ? '今日到期' : late >= -dueSoonDays ? '即将到期' : '未到期';
+    const detail = Object.fromEntries(Object.keys(fields).map(name=>{
+      const value = field(name);
+      if (['PDF 单子','还款记录'].includes(name)) return [name,(Array.isArray(value)?value:[]).map(item=>item?.name).filter(x=>typeof x === 'string').join('、')];
+      if (['日期','到期日','第一次还款日期','第二次还款日期','最后付款时间'].includes(name)) return [name,date(value,zone) || text(value)];
+      return [name,text(value)];
+    }));
+    const bill = {id:record_id,number:text(field('单号')) || record_id,store,customer,signed,due,balance,paid,late,status,detail,issue,term,dueSource:explicitDue?'Lark':'账期计算'};
+    if (!grouped.has(customer)) grouped.set(customer,{id:customer,name:rule?.name || store || '客户未填写',rule,bills:[]});
+    grouped.get(customer).bills.push(bill);
+    return bill;
+  });
+  const customers = [...grouped.values()].map(({id,name,rule,bills})=>{
+    const outstanding = bills.reduce((total,b)=>total+Math.max(0,b.balance ?? 0),0);
+    const overdue = sum(bills.filter(b=>b.late>0 && b.balance>0),'balance');
+    const limit = rule ? money(rule.limit) : null;
+    const warning = limit == null ? null : money(rule.warning ?? rule.limit*warningRatio);
+    const reasons = [];
+    const hold = (limit != null && outstanding >= limit) || bills.some(b=>b.balance>0 && b.late>=severeDays);
+    if (limit != null && outstanding >= limit) reasons.push('达到信用额度');
+    else if (warning != null && outstanding >= warning) reasons.push('达到额度预警线');
+    if (bills.some(b=>b.balance>0 && b.late>=severeDays)) reasons.push('逾期达到 '+severeDays+' 天');
+    if (!rule) reasons.push('客户或门店未配置');
+    if (bills.some(b=>b.issue)) reasons.push('账单数据待核对');
+    if (overdue > 0 && !hold) reasons.push('有逾期账款');
+    return {id,name,stores:rule?.aliases || [...new Set(bills.map(b=>b.store).filter(Boolean))],grade:rule?.grade || '—',outstanding,overdue,limit,warning,reasons,risk:hold?'暂停放货':reasons.length?'人工复核':'可放货',billIds:bills.map(b=>b.id),collection:bills.some(b=>b.balance>0 && b.late != null && b.late>=-dueSoonDays)};
+  }).sort((a,b)=>b.overdue-a.overdue || b.outstanding-a.outstanding);
+  const open = bills.filter(b=>b.balance>0);
+  const buckets = [
+    ['未到期',b=>b.late<0],['今日到期',b=>b.late===0],['逾期 1–30 天',b=>b.late>0&&b.late<=30],['逾期 31–60 天',b=>b.late>30&&b.late<=60],['逾期 60 天以上',b=>b.late>60],['到期日待核对',b=>b.late==null]
+  ].map(([label,filter])=>({label,value:sum(open.filter(b=>b.late!=null || label==='到期日待核对').filter(filter),'balance')}));
+  return {bills,customers,buckets,rules,notes:state.notes,stats:{outstanding:sum(open,'balance'),overdue:sum(open.filter(b=>b.late>0),'balance'),today:sum(open.filter(b=>b.late===0),'balance'),paid:sum(bills,'paid'),issues:bills.filter(b=>b.issue).length}};
+}
+
+const demoCustomers = [
+  {id:'C001',name:'华盛商贸',aliases:['华盛 · 中央店','华盛 · 东城店'],grade:'A',limit:120000,warning:96000},
+  {id:'C002',name:'新源供应',aliases:['新源 · 北区店'],grade:'B',limit:60000,warning:48000},
+  {id:'C003',name:'锦禾零售',aliases:['锦禾 · 南湾店','锦禾 · 西区店'],grade:'C',limit:40000,warning:32000},
+  {id:'C004',name:'瑞丰商行',aliases:['瑞丰 · 总店'],grade:'D',limit:24000,warning:19000},
+  {id:'C005',name:'东泽贸易',aliases:['东泽 · 港口店'],grade:'B',limit:80000,warning:64000}
+];
+export function demo(now) {
+  const rows = [[0,0,25,36000,8000],[0,1,-18,46000,10000],[0,0,0,22700,5000],[1,0,-8,34800,6000],[1,0,12,24200,0],[2,0,-34,34800,0],[2,1,5,10500,2000],[3,0,-67,31200,1000],[4,0,22,58000,8000],[4,0,-41,15000,15000],[0,1,3,18600,0],[2,1,13,10800,0]];
+  return rows.map(([client,store,offset,total,paid],i)=>{
+    const due = shift(now,offset), signed = shift(due,-60);
+    return {record_id:'demo-'+i,fields:{'单号':'DF-'+String(1026-i).padStart(5,'0'),'客户名字':demoCustomers[client].aliases[store],'日期':signed,'签单金额':total,'账期':60,'到期日':due,'第一次还款方式':paid?'转账':'','第一次还款日期':paid?shift(signed,7):'','第一次还款金额':paid,'第二次还款金额':0,'剩余货款':total-paid,'状态':paid===total?'已结清':'未结清','月份':signed.slice(0,7),'最后付款时间':paid?shift(signed,7):''}};
+  });
+}
+
+
+
+
+const byId = id=>document.getElementById(id);
+const content = byId('content'), dialog = byId('dialog');
+const titles = {overview:'财务仪表盘',bills:'账单列表',customers:'客户汇总',tasks:'催款任务',risk:'放货风控'};
+let data, page = 'overview', filter = '', query = '', requestId = 0, formatter;
+const escape = value=>String(value ?? '—').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const cash = value=>value == null ? '—' : formatter.format(value/100);
+const pill = label=>'<span class="pill '+(['已逾期','暂停放货'].includes(label)?'red':['待核对','人工复核','今日到期','即将到期'].includes(label)?'amber':'')+'">'+escape(label)+'</span>';
+const link = (kind,id,name)=>'<button class="link" data-'+kind+'="'+escape(id)+'">'+escape(name)+'</button>';
+function table(headers,rows) {
+  if (!rows.length) return '<div class="empty">没有符合条件的记录。</div>';
+  return '<div class="scroll"><table><thead><tr>'+headers.map(h=>'<th scope="col">'+escape(h)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(row=>'<tr>'+row.map(cell=>'<td>'+cell+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
+}
+const panel = (title,body,extra='')=>'<section class="panel"><div class="section-head"><h2>'+escape(title)+'</h2>'+extra+'</div>'+body+'</section>';
+const billTable = bills=>table(['单号','客户 / 门店','开单日','到期日','剩余货款','状态'],bills.map(b=>[link('bill',b.id,b.number),escape(b.store || '待核对'),escape(b.signed),escape(b.due),cash(b.balance),pill(b.status)]));
+const matches = (...values)=>values.some(v=>String(v ?? '').toLowerCase().includes(query.toLowerCase()));
+const search = (placeholder,options)=>'<div class="filters"><input id="query" type="text" aria-label="搜索" placeholder="'+placeholder+'" value="'+escape(query)+'">'+(options.length?'<select id="filter" aria-label="状态筛选"><option value="">全部状态</option>'+options.map(o=>'<option'+(o===filter?' selected':'')+'>'+o+'</option>').join('')+'</select>':'')+'</div>';
+function overview() {
+  const cards = [['应收余额',data.stats.outstanding,'全部未结清账单'],['逾期金额',data.stats.overdue,'到期日早于今天'],['今日到期',data.stats.today,'今日到期的未收款'],['累计回款',data.stats.paid,'两次还款金额合计']];
+  const max = Math.max(1,...data.buckets.map(b=>b.value));
+  const chart = '<div class="bar-list">'+data.buckets.map(b=>'<div class="bar"><span>'+escape(b.label)+'</span><meter aria-label="'+escape(b.label)+'" min="0" max="'+max+'" value="'+b.value+'"></meter><strong>'+cash(b.value)+'</strong></div>').join('')+'</div>';
+  const quick = '<div class="quick">'+[['tasks','待跟进客户',data.customers.filter(c=>c.collection).length],['risk','暂停放货客户',data.customers.filter(c=>c.risk==='暂停放货').length],['bills','待核对账单',data.stats.issues]].map(([p,label,n])=>'<button class="action" data-page="'+p+'"'+(label==='待核对账单'?' data-filter="待核对"':'')+'><span>'+label+'</span><strong>'+n+' →</strong></button>').join('')+'</div>';
+  const urgent = data.bills.filter(b=>b.balance>0 && b.late!=null && b.late>=0).sort((a,b)=>b.late-a.late).slice(0,6);
+  return '<div class="stats">'+cards.map(([label,value,sub])=>'<div class="card"><p>'+label+'</p><strong>'+cash(value)+'</strong><small>'+sub+'</small></div>').join('')+'</div><div class="overview-grid">'+panel('应收账龄',chart)+panel('待处理',quick)+'</div>'+panel('到期及逾期账单',billTable(urgent),'<button class="action" data-page="bills">查看账单</button>');
+}
+function list() {
+  if (page==='bills') return panel('全部账单',billTable(data.bills.filter(b=>matches(b.number,b.store) && (!filter || b.status===filter))),search('搜索单号或门店',['未到期','即将到期','今日到期','已逾期','已结清','待核对']));
+  const rows = data.customers.filter(c=>matches(c.name,...c.stores) && (!filter || c.risk===filter) && (page!=='tasks' || c.collection));
+  if (page==='tasks') return panel('到期及即将到期的客户',table(['客户','未收总额','逾期金额','最近反馈','操作'],rows.map(c=>{
+    const note = data.notes.find(n=>n.customer===c.id);
+    return [link('customer',c.id,c.name),cash(c.outstanding),cash(c.overdue),escape(note ? note.owner+' · '+note.feedback.slice(0,24) : '待跟进'),link('note',c.id,'记录催款')];
+  })),search('搜索客户或门店',[]));
+  if (page==='risk') return panel('门店放货风险',table(['客户','关联门店','等级','未收 / 额度','放货建议','判定依据'],rows.map(c=>[link('customer',c.id,c.name),escape(c.stores.join('、')),escape(c.grade),cash(c.outstanding)+' / '+cash(c.limit),pill(c.risk),escape(c.reasons.join('；') || '未触发风控规则')])),search('搜索客户或门店',['暂停放货','人工复核','可放货']));
+  return panel('按客户合并应收',table(['客户','关联门店','等级','未收总额','逾期金额','额度','预警线'],rows.map(c=>[link('customer',c.id,c.name),escape(c.stores.join('、')),escape(c.grade),cash(c.outstanding),cash(c.overdue),cash(c.limit),cash(c.warning)])),search('搜索客户或门店',[])+'<button class="action" data-config>配置客户与门店</button>');
+}
+function render(keepFocus=false) {
+  byId('title').textContent = titles[page];
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.page===page?'page':'false'));
+  if (!data) return;
+  const selection = keepFocus && document.activeElement.id==='query' ? byId('query').selectionStart : null;
+  content.innerHTML = (data.stats.issues ? '<div class="notice">'+data.stats.issues+' 张账单需核对。应收统计仅计入可识别的余额。</div>' : '')+(page==='overview'?overview():list());
+  if (selection!=null) {byId('query').focus();byId('query').setSelectionRange(selection,selection);}
+}
+const demoConfig = {
+  "termDays": 60,
+  "warningRatio": 0.8,
+  "severeDays": 30,
+  "dueSoonDays": 7,
+  "fields": {
+    "单号": "单号",
+    "客户名字": "客户名字",
+    "日期": "日期",
+    "重复值": "重复值",
+    "备注": "备注",
+    "签单金额": "签单金额",
+    "账期": "账期",
+    "ST 金额": "ST 金额",
+    "加单或打折金额": "加单或打折金额",
+    "PDF 单子": "PDF 单子",
+    "到期日": "到期日",
+    "第一次还款方式": "第一次还款方式",
+    "第一次还款日期": "第一次还款日期",
+    "第一次还款金额": "第一次还款金额",
+    "第二次还款方式": "第二次还款方式",
+    "第二次还款日期": "第二次还款日期",
+    "第二次还款金额": "第二次还款金额",
+    "剩余货款": "剩余货款",
+    "还款记录": "还款记录",
+    "状态": "状态",
+    "月份": "月份",
+    "最后付款时间": "最后付款时间"
+  },
+  "customers": []
+};
+const demoZone = 'America/Sao_Paulo';
+const demoStorageKey = 'dafu-finance-pages-demo-v1';
+function readDemoState() {
+  try {
+    return JSON.parse(localStorage.getItem(demoStorageKey)) || {customers:[],notes:[]};
+  } catch {
+    return {customers:[],notes:[]};
+  }
+}
+async function api(path, options) {
+  const state = readDemoState();
+  if (path === '/api/snapshot') {
+    const now = today(demoZone);
+    return {...snapshot(demo(now),demoConfig,state,now,'demo',demoZone),mode:'demo',date:now,timezone:demoZone,currency:'BRL'};
+  }
+  if (path !== '/api/workflow') throw Error('页面不存在');
+  const input = JSON.parse(options.body);
+  if (input.type === 'note') {
+    if (!input.owner.trim() || !input.feedback.trim()) throw Error('请填写负责人和催款反馈');
+    state.notes.unshift({customer:input.customer,owner:input.owner.trim(),feedback:input.feedback.trim(),promise:input.promise,at:new Date().toISOString()});
+  } else if (input.type === 'customers') {
+    const ids = new Set(), aliases = new Set();
+    for (const customer of input.customers) {
+      customer.id = customer.id.trim();
+      customer.name = customer.name.trim();
+      if (!customer.id || !customer.name || !(customer.limit > 0) || !customer.aliases.length || (customer.warning != null && customer.warning > customer.limit)) throw Error('请核对客户编号、名称、额度和门店别名');
+      if (ids.has(customer.id)) throw Error('客户编号必须唯一');
+      ids.add(customer.id);
+      for (const alias of customer.aliases) {
+        if (aliases.has(alias)) throw Error('门店别名必须唯一');
+        aliases.add(alias);
+      }
+    }
+    state.customers = input.customers;
+    state.configured = true;
+  } else throw Error('未知操作');
+  localStorage.setItem(demoStorageKey, JSON.stringify(state));
+  return {ok:true};
+}
+async function refresh() {
+  const current = ++requestId;
+  byId('refresh').disabled=true;
+  byId('alert').textContent='正在读取数据…';
+  try {
+    const result = await api('/api/snapshot');
+    if (current!==requestId) return;
+    data=result;
+    formatter=new Intl.NumberFormat('zh-CN',{style:'currency',currency:data.currency});
+    byId('date').textContent=data.date+' · '+data.timezone;
+    byId('source').textContent=data.mode==='demo'?'公开演示 · 数据仅存当前浏览器':'Lark Base · 只读';
+    byId('alert').textContent='';
+    render();
+  } catch(error) {
+    if (current!==requestId) return;
+    data=undefined;content.replaceChildren();
+    byId('source').textContent='读取失败';
+    byId('alert').textContent=error.message || '请检查服务是否已启动';
+  } finally {if(current===requestId) byId('refresh').disabled=false;}
+}
+function openDialog(title,html) {
+  byId('dialog-title').textContent=title;
+  byId('dialog-content').innerHTML=html;
+  if(!dialog.open) dialog.showModal();
+}
+function customer(id) {
+  const c=data.customers.find(row=>row.id===id);
+  if (!c) return;
+  const notes=data.notes.filter(n=>n.customer===id);
+  openDialog(c.name,'<p>'+pill(c.risk)+' <span class="muted">'+escape(c.reasons.join('；'))+'</span></p><p>未收总额 <strong>'+cash(c.outstanding)+'</strong> · 逾期 '+cash(c.overdue)+'</p><h3>未结清账单与待核对记录</h3>'+billTable(data.bills.filter(b=>b.customer===id && (b.balance>0 || b.issue)))+'<div class="section-head"><h3>催款记录</h3><button class="action" data-note="'+escape(id)+'">记录催款</button></div>'+ (notes.length?notes.map(n=>'<div class="note"><strong>'+escape(n.owner)+'</strong> · '+escape(new Date(n.at).toLocaleString('zh-CN',{timeZone:data.timezone}))+(n.promise?' · 承诺付款 '+escape(n.promise):'')+'<br>'+escape(n.feedback)+'</div>').join(''):'<p class="muted">暂无催款记录。</p>'));
+}
+const ruleRow = (c={})=>'<div class="rule"><label>客户编号<input name="id" required value="'+escape(c.id??'')+'"></label><label>客户名称<input name="name" required value="'+escape(c.name??'')+'"></label><label>等级<select name="grade">'+['A','B','C','D'].map(g=>'<option'+(g===c.grade?' selected':'')+'>'+g+'</option>').join('')+'</select></label><label>信用额度<input name="limit" required type="number" min="0.01" step="0.01" value="'+escape(c.limit??'')+'"></label><label>预警金额<input name="warning" type="number" min="0.01" step="0.01" value="'+escape(c.warning??'')+'"></label><label class="wide">门店别名（每行一个）<textarea name="aliases" required rows="2">'+escape((c.aliases||[]).join('\n'))+'</textarea></label><div><button class="action" type="button" data-remove>移除此客户</button></div></div>';
+document.addEventListener('click',event=>{
+  const button=event.target.closest('button');
+  if (!button) return;
+  const {page:target,bill,customer:id,note}=button.dataset;
+  if (target) {page=target;filter=button.dataset.filter||'';query='';render();}
+  if (button.id==='refresh') refresh();
+  if (button.id==='close') dialog.close();
+  if (bill && data) {
+    const b=data.bills.find(row=>row.id===bill);
+    if (b) openDialog('账单 '+b.number,'<p>'+pill(b.status)+' · 到期日 '+escape(b.due)+' · '+escape(b.dueSource)+' · '+b.term+' 天账期</p><dl>'+Object.entries(b.detail).map(([key,value])=>'<div><dt>'+escape(key)+'</dt><dd>'+escape(value||'—')+'</dd></div>').join('')+'</dl>');
+  }
+  if (id && data) customer(id);
+  if (note && data) {
+    const name=data.customers.find(c=>c.id===note)?.name;
+    openDialog('记录催款 · '+name,'<form id="note-form" data-customer="'+escape(note)+'"><label>负责人<input name="owner" required maxlength="80"></label><label>承诺付款日期<input name="promise" type="date"></label><label>催款反馈<textarea name="feedback" required maxlength="1000" rows="4"></textarea></label><div class="error" role="alert"></div><div><button class="primary">保存催款记录</button></div></form>');
+  }
+  if (button.hasAttribute('data-config') && data) openDialog('配置客户与门店','<p class="muted">别名需与 Lark「客户名字」一致。客户编号用于关联催款历史。</p><form id="rule-form"><div class="error" role="alert"></div>'+data.rules.map(ruleRow).join('')+'<div class="controls"><button class="action" type="button" data-add>＋ 添加客户</button><button class="primary">保存配置</button></div></form>');
+  if (button.hasAttribute('data-add')) button.parentElement.insertAdjacentHTML('beforebegin',ruleRow());
+  if (button.hasAttribute('data-remove')) button.closest('.rule').remove();
+});
+document.addEventListener('input',event=>{if(event.target.id==='query'){query=event.target.value;render(true);}});
+document.addEventListener('change',event=>{if(event.target.id==='filter'){filter=event.target.value;render();byId('filter').focus();}});
+dialog.addEventListener('submit',async event=>{
+  event.preventDefault();
+  const form=event.target, button=form.querySelector('.primary'), message=form.querySelector('.error');
+  button.disabled=true;message.textContent='';
+  const values=Object.fromEntries(new FormData(form));
+  const payload=form.id==='note-form' ? {type:'note',customer:form.dataset.customer,...values} : {type:'customers',customers:[...form.querySelectorAll('.rule')].map(row=>{
+    const value=name=>row.querySelector('[name="'+name+'"]').value;
+    return {id:value('id'),name:value('name'),grade:value('grade'),limit:Number(value('limit')),warning:value('warning')?Number(value('warning')):null,aliases:value('aliases').split(/\r?\n/).map(v=>v.trim()).filter(Boolean)};
+  })};
+  try {
+    await api('/api/workflow',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    dialog.close();
+    await refresh();
+    if(data) byId('alert').textContent='已保存到 DAFU。';
+  } catch(error) {message.textContent=error.message;}
+  finally {button.disabled=false;}
+});
+refresh();
+
+
+
+</script>
+</body></html>
+
