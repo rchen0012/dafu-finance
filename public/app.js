@@ -1,7 +1,7 @@
 const byId = id=>document.getElementById(id);
 const content = byId('content'), dialog = byId('dialog');
-const titles = {overview:'财务仪表盘',bills:'账单列表',customers:'客户汇总',tasks:'催款任务',risk:'放货风控'};
-let data, page = 'overview', filter = '', query = '', requestId = 0, formatter;
+const titles = {overview:'财务仪表盘',bills:'账单列表',customers:'客户汇总',tasks:'催款任务',risk:'放货风控',directory:'顾客管理'};
+let data, page = 'overview', filter = '', query = '', requestId = 0, formatter = new Intl.NumberFormat('zh-CN',{style:'currency',currency:'BRL'});
 const escape = value=>String(value ?? '—').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const cash = value=>value == null ? '—' : formatter.format(value/100);
 const pill = label=>'<span class="pill '+(['已逾期','暂停放货'].includes(label)?'red':['待核对','人工复核','今日到期','即将到期'].includes(label)?'amber':'')+'">'+escape(label)+'</span>';
@@ -32,12 +32,49 @@ function list() {
   if (page==='risk') return panel('门店放货风险',table(['客户','关联门店','等级','未收 / 额度','放货建议','判定依据'],rows.map(c=>[link('customer',c.id,c.name),escape(c.stores.join('、')),escape(c.grade),cash(c.outstanding)+' / '+cash(c.limit),pill(c.risk),escape(c.reasons.join('；') || '未触发风控规则')])),search('搜索客户或门店',['暂停放货','人工复核','可放货']));
   return panel('按客户合并应收',table(['客户','关联门店','等级','未收总额','逾期金额','额度','预警线'],rows.map(c=>[link('customer',c.id,c.name),escape(c.stores.join('、')),escape(c.grade),cash(c.outstanding),cash(c.overdue),cash(c.limit),cash(c.warning)])),search('搜索客户或门店',[])+'<button class="action" data-config>配置客户与门店</button>');
 }
+let directory, directoryRequest = 0, directoryError = '';
+async function loadDirectory() {
+  const request = ++directoryRequest;
+  directoryError = '';
+  try {
+    const result = await api('/api/customers');
+    if (request === directoryRequest) directory = result;
+  } catch (error) {
+    if (request === directoryRequest) {
+      directory = undefined;
+      directoryError = error.message;
+    }
+  }
+  if (page === 'directory') render();
+}
+function directoryView() {
+  if (directoryError) return '<div class="notice">'+escape(directoryError)+'</div>';
+  if (!directory) return '<div class="empty">正在读取顾客资料…</div>';
+  const source = {lark:'保存后写入 Lark 顾客表',demo:'演示数据 · 保存至本机',local:'本机配置 · 尚未启用 Lark 顾客表'};
+  const money = new Intl.NumberFormat('zh-CN',{style:'currency',currency:directory.currency || 'BRL'});
+  const directoryCash = value=>value==null?'—':money.format(value);
+  const rows = directory.rows.filter(c=>matches(c.id,c.name,...c.aliases));
+  return panel('顾客档案','<p class="muted">'+source[directory.source]+'</p>'+table(
+    ['编号','顾客','等级','信用额度','预警金额','门店','操作'],
+    rows.map(c=>[escape(c.id),escape(c.name),escape(c.grade),directoryCash(c.limit),directoryCash(c.warning),escape(c.aliases.join('、')),link('edit-customer',c.id,'编辑')])
+  ),search('搜索编号、顾客或门店',[])+'<button class="primary" data-add-customer>新增顾客</button>');
+}
+function editDirectoryCustomer(customer) {
+  const row = customer || {};
+  const fields = ruleRow(row).replace('<div><button class="action" type="button" data-remove>移除此客户</button></div>','').replace('name="id" required',customer?'name="id" required readonly':'name="id" required');
+  const metadata = customer ? ' data-existing="1" data-record-id="'+escape(row.recordId ?? '')+'" data-version="'+escape(row.version ?? '')+'"' : '';
+  openDialog(customer?'编辑顾客':'新增顾客','<form id="customer-form"'+metadata+'>'+fields+'<div class="error" role="alert"></div><div><button class="primary">'+(directory.source==='lark'?'保存到 Lark':'保存顾客')+'</button></div></form>');
+}
+function customerValues(values) {
+  return {id:values.id,name:values.name,grade:values.grade,limit:Number(values.limit),warning:values.warning?Number(values.warning):null,aliases:values.aliases.split(/\r?\n/).map(v=>v.trim()).filter(Boolean)};
+}
+
 function render(keepFocus=false) {
   byId('title').textContent = titles[page];
   document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.page===page?'page':'false'));
-  if (!data) return;
+  if (!data && page!=='directory') return;
   const selection = keepFocus && document.activeElement.id==='query' ? byId('query').selectionStart : null;
-  content.innerHTML = (data.stats.issues ? '<div class="notice">'+data.stats.issues+' 张账单需核对。应收统计仅计入可识别的余额。</div>' : '')+(page==='overview'?overview():list());
+  content.innerHTML = page==='directory' ? directoryView() : (data.stats.issues ? '<div class="notice">'+data.stats.issues+' 张账单需核对。应收统计仅计入可识别的余额。</div>' : '')+(page==='overview'?overview():list());
   if (selection!=null) {byId('query').focus();byId('query').setSelectionRange(selection,selection);}
 }
 async function api(path,options) {
@@ -82,8 +119,16 @@ document.addEventListener('click',event=>{
   const button=event.target.closest('button');
   if (!button) return;
   const {page:target,bill,customer:id,note}=button.dataset;
-  if (target) {page=target;filter=button.dataset.filter||'';query='';render();}
-  if (button.id==='refresh') refresh();
+  if (target) {
+    page=target;filter=button.dataset.filter||'';query='';render();
+    if (page==='directory') loadDirectory();
+  }
+  if (directory && button.hasAttribute('data-add-customer')) editDirectoryCustomer();
+  if (directory && button.dataset.editCustomer) {
+    const selected = directory.rows.find(row=>row.id===button.dataset.editCustomer);
+    if (selected) editDirectoryCustomer(selected);
+  }
+  if (button.id==='refresh') page==='directory' ? loadDirectory() : refresh();
   if (button.id==='close') dialog.close();
   if (bill && data) {
     const b=data.bills.find(row=>row.id===bill);
@@ -93,6 +138,10 @@ document.addEventListener('click',event=>{
   if (note && data) {
     const name=data.customers.find(c=>c.id===note)?.name;
     openDialog('记录催款 · '+name,'<form id="note-form" data-customer="'+escape(note)+'"><label>负责人<input name="owner" required maxlength="80"></label><label>承诺付款日期<input name="promise" type="date"></label><label>催款反馈<textarea name="feedback" required maxlength="1000" rows="4"></textarea></label><div class="error" role="alert"></div><div><button class="primary">保存催款记录</button></div></form>');
+  }
+  if (button.hasAttribute('data-config') && data?.liveCustomerWrite) {
+    page='directory';filter='';query='';render();loadDirectory();
+    return;
   }
   if (button.hasAttribute('data-config') && data) openDialog('配置客户与门店','<p class="muted">别名需与 Lark「客户名字」一致。客户编号用于关联催款历史。</p><form id="rule-form"><div class="error" role="alert"></div>'+data.rules.map(ruleRow).join('')+'<div class="controls"><button class="action" type="button" data-add>＋ 添加客户</button><button class="primary">保存配置</button></div></form>');
   if (button.hasAttribute('data-add')) button.parentElement.insertAdjacentHTML('beforebegin',ruleRow());
@@ -105,6 +154,18 @@ dialog.addEventListener('submit',async event=>{
   const form=event.target, button=form.querySelector('.primary'), message=form.querySelector('.error');
   button.disabled=true;message.textContent='';
   const values=Object.fromEntries(new FormData(form));
+  if (form.id==='customer-form') {
+    try {
+      const payload={...customerValues(values),recordId:form.dataset.recordId,version:form.dataset.version};
+      await api('/api/customers',{method:form.dataset.existing?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      dialog.close();
+      await loadDirectory();
+      await refresh();
+      if (!directoryError && data) byId('alert').textContent=directory.source==='lark'?'已保存到 Lark 顾客表。':'已保存顾客资料。';
+    } catch(error) {message.textContent=error.message;}
+    finally {button.disabled=false;}
+    return;
+  }
   const payload=form.id==='note-form' ? {type:'note',customer:form.dataset.customer,...values} : {type:'customers',customers:[...form.querySelectorAll('.rule')].map(row=>{
     const value=name=>row.querySelector('[name="'+name+'"]').value;
     return {id:value('id'),name:value('name'),grade:value('grade'),limit:Number(value('limit')),warning:value('warning')?Number(value('warning')):null,aliases:value('aliases').split(/\r?\n/).map(v=>v.trim()).filter(Boolean)};
@@ -118,5 +179,7 @@ dialog.addEventListener('submit',async event=>{
   finally {button.disabled=false;}
 });
 refresh();
+
+
 
 
